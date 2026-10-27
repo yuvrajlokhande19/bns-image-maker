@@ -1,6 +1,6 @@
 """
 BNS Daily Auto-Poster for Instagram via Composio & GitHub
-Publishes posts from v2/bns_posts.json using rendered images in v2/output/
+Publishes posts & stories from v2/bns_posts.json using rendered images in v2/output/
 """
 import os
 import sys
@@ -149,12 +149,12 @@ def format_caption(post_data: dict) -> str:
 
 def publish_bns_post(image_url: str, caption: str) -> dict:
     """
-    Publish via Composio Instagram tools:
+    Publish Feed Post via Composio Instagram tools:
     1. INSTAGRAM_POST_IG_USER_MEDIA
     2. INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH
     """
-    print(f"  [1/2] Creating Instagram Media Container via Composio...")
-    print(f"        Image URL: {image_url}")
+    print(f"  [Feed 1/2] Creating Instagram Media Container via Composio...")
+    print(f"             Image URL: {image_url}")
     container_res = execute_composio_tool("INSTAGRAM_POST_IG_USER_MEDIA", {
         "ig_user_id": "me",
         "image_url": image_url,
@@ -163,21 +163,48 @@ def publish_bns_post(image_url: str, caption: str) -> dict:
     creation_id = container_res.get("id")
     if not creation_id:
         raise ValueError(f"No creation_id returned: {container_res}")
-    print(f"        Container created successfully (ID: {creation_id})")
+    print(f"             Container created successfully (ID: {creation_id})")
     
-    print("  [2/2] Publishing Media Container to Instagram...")
+    print("  [Feed 2/2] Publishing Feed Post to Instagram...")
     publish_res = execute_composio_tool("INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH", {
         "ig_user_id": "me",
         "creation_id": str(creation_id),
         "max_wait_seconds": 60
     })
     published_id = publish_res.get("id")
-    print(f"        SUCCESS! Published Media ID: {published_id}")
+    print(f"             SUCCESS! Published Feed Post ID: {published_id}")
+    return publish_res
+
+def publish_bns_story(image_url: str) -> dict:
+    """
+    Publish the exact same image as an Instagram Story:
+    1. INSTAGRAM_POST_IG_USER_MEDIA (media_type: STORIES)
+    2. INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH
+    """
+    print(f"  [Story 1/2] Creating Instagram Story Container...")
+    container_res = execute_composio_tool("INSTAGRAM_POST_IG_USER_MEDIA", {
+        "ig_user_id": "me",
+        "media_type": "STORIES",
+        "image_url": image_url
+    })
+    creation_id = container_res.get("id")
+    if not creation_id:
+        raise ValueError(f"No creation_id returned for story: {container_res}")
+    print(f"              Story container created (ID: {creation_id})")
+    
+    print("  [Story 2/2] Publishing Story to Instagram...")
+    publish_res = execute_composio_tool("INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH", {
+        "ig_user_id": "me",
+        "creation_id": str(creation_id),
+        "max_wait_seconds": 60
+    })
+    story_id = publish_res.get("id")
+    print(f"              SUCCESS! Published Story ID: {story_id}")
     return publish_res
 
 def main(dry_run: bool = False):
     print("=" * 60)
-    print("  BNS Instagram Automated Publisher (Composio Integration)")
+    print("  BNS Instagram Automated Publisher (Post + Story)")
     print(f"  Target Account: @{COMPOSIO_ACCOUNT}")
     print(f"  Host Repository: {GITHUB_REPO}")
     print("=" * 60)
@@ -213,9 +240,19 @@ def main(dry_run: bool = False):
         print("\n[DRY RUN] Everything verified! Not publishing to Instagram.")
         return
         
-    print("\n[+] Publishing to Instagram via Composio...")
+    # 1. Publish Feed Post
+    print("\n[1/2] Publishing Feed Post to Instagram via Composio...")
     pub_result = publish_bns_post(image_url, caption)
     published_id = pub_result.get("id", "unknown")
+    
+    # 2. Publish Story
+    print("\n[2/2] Publishing Story to Instagram via Composio...")
+    try:
+        story_result = publish_bns_story(image_url)
+        story_id = story_result.get("id", "unknown")
+    except Exception as e:
+        print(f"Warning: Story publishing failed: {e}")
+        story_id = None
     
     # Update State
     state["current_index"] = current_idx + 1
@@ -225,11 +262,12 @@ def main(dry_run: bool = False):
         "series_mark": post["series_mark"],
         "sections": post["sections_range"],
         "published_id": published_id,
+        "story_id": story_id,
         "image_url": image_url,
         "time": time.strftime("%Y-%m-%d %H:%M:%S")
     })
     save_state(state)
-    print(f"\n[+] Progress saved! Next up: Post #{current_idx + 2} of {len(all_posts)}")
+    print(f"\n[+] Progress saved! Both Post & Story published. Next up: Post #{current_idx + 2} of {len(all_posts)}")
 
 if __name__ == "__main__":
     is_dry = "--dry-run" in sys.argv
