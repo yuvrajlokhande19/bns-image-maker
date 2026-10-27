@@ -234,7 +234,10 @@ def main(dry_run: bool = False):
     
     # Direct CDN / GitHub raw URL
     image_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/v2/output/{post_file}"
-    print(f"\n[+] Image Public URL: {image_url}")
+    story_file = f"BNS_story-{post['series_mark']}.jpg"
+    story_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/v2/output/{story_file}"
+    print(f"\n[+] Feed Image URL:  {image_url}")
+    print(f"[+] Story Image URL: {story_url}")
     
     if dry_run:
         print("\n[DRY RUN] Everything verified! Not publishing to Instagram.")
@@ -245,10 +248,10 @@ def main(dry_run: bool = False):
     pub_result = publish_bns_post(image_url, caption)
     published_id = pub_result.get("id", "unknown")
     
-    # 2. Publish Story
-    print("\n[2/2] Publishing Story to Instagram via Composio...")
+    # 2. Publish Story (9:16 Full Screen Perfect Fit)
+    print("\n[2/2] Publishing 9:16 Story to Instagram via Composio...")
     try:
-        story_result = publish_bns_story(image_url)
+        story_result = publish_bns_story(story_url)
         story_id = story_result.get("id", "unknown")
     except Exception as e:
         print(f"Warning: Story publishing failed: {e}")
