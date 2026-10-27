@@ -1,0 +1,14 @@
+{
+  "name": "bns-image-maker-v2",
+  "version": "2.0.0",
+  "description": "Locked-template BNS infographic renderer (Playwright)",
+  "scripts": {
+    "build-template": "python build_template.py",
+    "render": "node render.js",
+    "render-resume": "node render.js --resume",
+    "render-post": "node render.js --post"
+  },
+  "dependencies": {
+    "playwright": "^1.64.1"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "posts": [
+    {
+      "file": "post-01",
+      "series_mark": "01",
+      "sections_range": "1-3",
+      "chapter_num": "Chapter I",
+      "chapter_name": "Preliminary",
+      "cards": [
+        {
+          "n": "01", "s": "1",
+          "title": "Short title, commencement and application",
+          "easy": "Section 1 gives the short title of the Bharatiya Nyaya Sanhita, 2023 and specifies its commencement and application.",
+          "takeaway": "Introduces the Sanhita and explains where and when it applies.",
+          "subs": ["Short title", "Commencement", "Application"]
+        },
+        {
+          "n": "02", "s": "2",
+          "title": "Definitions",
+          "easy": "Section 2 contains important definitions used in the Sanhita. These meanings help readers understand how specific terms are used throughout the law.",
+          "takeaway": "Defines important terms used throughout the Sanhita.",
+          "subs": ["39 defined terms", "Clauses 2(1)–2(39)"]
+        },
+        {
+          "n": "03", "s": "3",
+          "title": "General explanations",
+          "easy": "Section 3 provides general explanations that help interpret and apply provisions of the Sanhita correctly.",
+          "takeaway": "Helps in understanding how provisions of the Sanhita are interpreted.",
+          "subs": ["9 explanations", "Clauses 3(1)–3(9)"]
+        }
+      ]
+    }
+  ]
+}

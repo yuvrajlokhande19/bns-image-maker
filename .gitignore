@@ -1,0 +1,23 @@
+# Virtual Environments
+.venv/
+env/
+venv/
+instagram-mcp/
+
+# Node modules
+node_modules/
+v2/node_modules/
+
+# Temp html builds
+v2/.tmp/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Sensitive environment variables
+*.env
+*.env.bak
+
+# Temp scratch
+scratch/

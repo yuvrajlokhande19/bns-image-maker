@@ -1,0 +1,41 @@
+name: Daily BNS Instagram Auto-Poster (3x Daily)
+
+on:
+  schedule:
+    # 3 times daily (IST is UTC+5:30):
+    # 04:30 UTC = 10:00 AM IST
+    # 09:30 UTC = 03:00 PM IST
+    # 14:30 UTC = 08:00 PM IST
+    - cron: '30 4,9,14 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab anytime!
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Publish Next BNS Post to Instagram
+        env:
+          COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY || 'ck_MwNUV8UkCyfT0XYeHy9Z' }}
+        run: |
+          python auto_poster.py
+
+      - name: Commit & Push Progress State
+        run: |
+          git config user.name "BNS Instagram Bot"
+          git config user.email "bot@linpanelegalservices.in"
+          git add v2/posting_state.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: updated posting state after scheduled post" && git push)
