@@ -1,5 +1,5 @@
 {
-  "current_index": 8,
+  "current_index": 9,
   "posted": [
     {
       "index": 0,
@@ -80,6 +80,16 @@
       "story_id": "18131460796829776",
       "image_url": "https://raw.githubusercontent.com/yuvrajlokhande19/bns-image-maker/main/v2/output/BNS_post-08.jpg",
       "time": "2026-10-31 10:33:16"
+    },
+    {
+      "index": 8,
+      "file": "BNS_post-09.jpg",
+      "series_mark": "09",
+      "sections": "25\u201327",
+      "published_id": "18159944407503362",
+      "story_id": "18112371869231900",
+      "image_url": "https://raw.githubusercontent.com/yuvrajlokhande19/bns-image-maker/main/v2/output/BNS_post-09.jpg",
+      "time": "2026-10-31 18:42:05"
     }
   ]
 }
