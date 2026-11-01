@@ -1,4 +1,4 @@
-name: Daily BNS Instagram Auto-Poster (3x Daily)
+name: Daily BNS Multi-Platform Auto-Poster (Instagram & X)
 
 on:
   schedule:
@@ -27,15 +27,24 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Publish Next BNS Post to Instagram
+      - name: Install Dependencies
+        run: |
+          pip install tweepy
+
+      - name: Publish Next BNS Posts to Instagram & X
         env:
           COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY || 'ck_MwNUV8UkCyfT0XYeHy9Z' }}
+          TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
+          TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
         run: |
           python auto_poster.py
 
       - name: Commit & Push Progress State
         run: |
-          git config user.name "BNS Instagram Bot"
+          git config user.name "BNS Auto Bot"
           git config user.email "bot@linpanelegalservices.in"
           git add v2/posting_state.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: updated posting state after scheduled post" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: updated posting state after scheduled cross-post" && git push)
