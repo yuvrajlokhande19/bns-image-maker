@@ -15,21 +15,23 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
       - name: Install Dependencies
         run: |
-          pip install tweepy
+          pip install --quiet tweepy
 
       - name: Publish Next BNS Posts to Instagram & X
         env:
@@ -47,4 +49,8 @@ jobs:
           git config user.name "BNS Auto Bot"
           git config user.email "bot@linpanelegalservices.in"
           git add v2/posting_state.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: updated posting state after scheduled cross-post" && git push)
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: updated posting state after scheduled cross-post"
+            git pull --rebase origin main
+            git push
+          fi
