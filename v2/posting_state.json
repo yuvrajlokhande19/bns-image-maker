@@ -1,5 +1,5 @@
 {
-  "current_index": 23,
+  "current_index": 24,
   "posted": [
     {
       "index": 0,
@@ -216,6 +216,15 @@
       "published_id": "18118512104095972",
       "story_id": "17977048413148424",
       "time": "2026-11-07 18:59:53"
+    },
+    {
+      "index": 23,
+      "file": "BNS_post-24.jpg",
+      "series_mark": "24",
+      "sections": "70\u201372",
+      "published_id": "18091958186268191",
+      "story_id": "18172041064476766",
+      "time": "2026-11-14 18:31:29"
     }
   ],
   "twitter_current_index": 0,
