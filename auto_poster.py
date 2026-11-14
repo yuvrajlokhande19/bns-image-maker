@@ -273,8 +273,102 @@ def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
+def get_proper_hashtags(post_data: dict) -> list[str]:
+    """Generate comprehensive, high-reach, topic-tailored legal hashtags for BNS posts."""
+    tags = [
+        "#BharatiyaNyayaSanhita",
+        "#BNS2023",
+        "#IndianLaw",
+        "#LinpaneLegalServices",
+        "#CriminalLaw",
+        "#LegalAwareness",
+        "#LawNotes",
+        "#LawStudentsIndia",
+        "#JudiciaryPrep",
+        "#UPSC",
+        "#KnowTheLaw",
+        "#LegalEducation",
+        "#LawyersOfInstagram",
+        "#Advocate"
+    ]
+    
+    # 1. Section-specific hashtags
+    for card in post_data.get("cards", []):
+        s = card.get("s", "").strip()
+        if s:
+            tags.append(f"#BNSSection{s}")
+            
+    # 2. Topic & Chapter-specific hashtags
+    chapter = (post_data.get("chapter_name", "") + " " + post_data.get("chapter_num", "")).lower()
+    all_text = (
+        chapter + " " + " ".join(
+            (c.get("title", "") + " " + c.get("easy", "") + " " + " ".join(c.get("subs", [])))
+            for c in post_data.get("cards", [])
+        )
+    ).lower()
+    
+    if any(k in all_text for k in ["woman", "women", "child", "modesty", "sexual", "rape", "marriage", "dowry", "harassment", "voyeurism", "stalking"]):
+        tags.extend([
+            "#WomenSafety",
+            "#WomenRights",
+            "#ProtectionOfWomen",
+            "#ChildProtection",
+            "#StopCrimeAgainstWomen",
+            "#LegalRightsOfWomen",
+            "#IPCvsBNS"
+        ])
+    elif any(k in all_text for k in ["murder", "culpable homicide", "hurt", "assault", "kidnapping", "abduction", "body", "life"]):
+        tags.extend([
+            "#OffencesAgainstBody",
+            "#CriminalJusticeSystem",
+            "#RightToLife",
+            "#IPCvsBNS",
+            "#IndianJudiciary"
+        ])
+    elif any(k in all_text for k in ["theft", "extortion", "robbery", "dacoity", "cheating", "property", "mischief", "criminal breach of trust", "forgery"]):
+        tags.extend([
+            "#OffencesAgainstProperty",
+            "#PropertyLaw",
+            "#FinancialCrimes",
+            "#CyberCrimeIndia",
+            "#IPCvsBNS"
+        ])
+    elif any(k in all_text for k in ["state", "sedition", "treason", "sovereignty", "armed forces", "public servant", "contempt", "perjury", "election"]):
+        tags.extend([
+            "#ConstitutionalLaw",
+            "#OffencesAgainstState",
+            "#PublicTranquility",
+            "#IndianConstitution",
+            "#IPCvsBNS"
+        ])
+    else:
+        tags.extend([
+            "#CriminalJustice",
+            "#LegalReform",
+            "#NewCriminalLaws",
+            "#IPCvsBNS"
+        ])
+        
+    # 3. Regional / Practice authority tags
+    tags.extend([
+        "#NagpurLawyer",
+        "#WardhaLawyer",
+        "#MaharashtraLegal"
+    ])
+    
+    # Clean and deduplicate while maintaining order (max 28 to be safe within Instagram's 30 limit)
+    seen = set()
+    unique_tags = []
+    for t in tags:
+        t_clean = t.replace(" ", "").replace("-", "")
+        if t_clean.lower() not in seen:
+            seen.add(t_clean.lower())
+            unique_tags.append(t_clean)
+            
+    return unique_tags[:28]
+
 def format_caption(post_data: dict) -> str:
-    """Generate an engaging, legally accurate Instagram caption."""
+    """Generate an engaging, legally accurate Instagram caption with proper hashtags."""
     series_mark = post_data.get("series_mark", "01")
     sections_range = post_data.get("sections_range", "")
     chapter_num = post_data.get("chapter_num", "")
@@ -298,12 +392,13 @@ def format_caption(post_data: dict) -> str:
         caption_lines.append(f"   Explanation: {easy}")
         caption_lines.append("")
         
+    hashtags_str = " ".join(get_proper_hashtags(post_data))
     caption_lines.extend([
         "💡 Save this post for your legal reference!",
         "👥 Follow @linpane_legal_services for daily criminal law insights.",
         "",
         "---",
-        "#BharatiyaNyayaSanhita #BNS2023 #IndianLaw #LegalEducation #LawNotes #LinpaneLegalServices #CriminalLaw #LawStudentsIndia #UPSC #JudiciaryPrep #KnowTheLaw"
+        hashtags_str
     ])
     
     return "\n".join(caption_lines)
