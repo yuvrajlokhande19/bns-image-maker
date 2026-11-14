@@ -61,11 +61,11 @@ def create_story_graphic(post_img_path: Path, output_story_path: Path):
         font_pill = ImageFont.load_default()
         font_sub = ImageFont.load_default()
         
-    draw.text((story_w // 2, pill_y + pill_h // 2), "NEW POST ⚖️", fill=(15, 41, 66), anchor="mm", font=font_pill)
+    draw.text((story_w // 2, pill_y + pill_h // 2), "NEW POST", fill=(15, 41, 66), anchor="mm", font=font_pill)
     
-    # Bottom callout: "Tap to read full post on feed 👆"
+    # Bottom callout: "Tap to read full breakdown on feed"
     bottom_y = card_y + card_h + 45
-    draw.text((story_w // 2, bottom_y), "Tap to read full breakdown on feed 👆", fill=(255, 255, 255, 240), anchor="mm", font=font_sub)
+    draw.text((story_w // 2, bottom_y), "Tap to read full breakdown on feed", fill=(255, 255, 255, 240), anchor="mm", font=font_sub)
     draw.text((story_w // 2, bottom_y + 40), "@linpane_legal_services", fill=(244, 196, 78, 240), anchor="mm", font=font_sub)
     
     # Convert to RGB JPEG

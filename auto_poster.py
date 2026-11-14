@@ -484,36 +484,40 @@ def main(dry_run: bool = False):
                 print(f"[DRY RUN] Pre-flight check warning: {e}")
 
         if not dry_run:
-            verify_instagram_connection()
-            verify_remote_image(image_url, "Feed Image")
-
-            print("\n[1/2] Publishing Feed Post to Instagram via Composio...")
-            pub_res = publish_bns_post(image_url, caption)
-            pub_id = pub_res.get("id", "unknown")
-
-            print("\n[2/2] Publishing 9:16 Story to Instagram via Composio...")
             try:
-                if not story_path.exists():
-                    raise FileNotFoundError(f"Missing local story image: {story_path}")
-                verify_remote_image(story_url, "Story Image")
-                story_res = publish_bns_story(story_url)
-                story_id = story_res.get("id", "unknown")
+                verify_instagram_connection()
+                verify_remote_image(image_url, "Feed Image")
+
+                print("\n[1/2] Publishing Feed Post to Instagram via Composio...")
+                pub_res = publish_bns_post(image_url, caption)
+                pub_id = pub_res.get("id", "unknown")
+
+                print("\n[2/2] Publishing 9:16 Story to Instagram via Composio...")
+                try:
+                    if not story_path.exists():
+                        raise FileNotFoundError(f"Missing local story image: {story_path}")
+                    verify_remote_image(story_url, "Story Image")
+                    story_res = publish_bns_story(story_url)
+                    story_id = story_res.get("id", "unknown")
+                except Exception as e:
+                    print(f"Warning: Story publishing failed: {e}")
+                    story_id = None
+                    
+                state["current_index"] = ig_idx + 1
+                state["posted"].append({
+                    "index": ig_idx,
+                    "file": post_file,
+                    "series_mark": post["series_mark"],
+                    "sections": post["sections_range"],
+                    "published_id": pub_id,
+                    "story_id": story_id,
+                    "time": time.strftime("%Y-%m-%d %H:%M:%S")
+                })
+                save_state(state)
+                print(f"[+] Instagram Progress Saved! Next IG post: Post #{ig_idx + 2}")
             except Exception as e:
-                print(f"Warning: Story publishing failed: {e}")
-                story_id = None
-                
-            state["current_index"] = ig_idx + 1
-            state["posted"].append({
-                "index": ig_idx,
-                "file": post_file,
-                "series_mark": post["series_mark"],
-                "sections": post["sections_range"],
-                "published_id": pub_id,
-                "story_id": story_id,
-                "time": time.strftime("%Y-%m-%d %H:%M:%S")
-            })
-            save_state(state)
-            print(f"[+] Instagram Progress Saved! Next IG post: Post #{ig_idx + 2}")
+                print(f"[-] Instagram publication failed: {e}")
+                print("    Note: Please reconnect Instagram in Composio to resume Instagram publishing.")
     else:
         print("[!] All Instagram posts completed!")
 
